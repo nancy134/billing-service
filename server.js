@@ -4,6 +4,7 @@ const cors = require('cors');
 const braintreeAPI = require('./braintreeAPI');
 const AWS = require('aws-sdk');
 const { Consumer } = require('sqs-consumer');
+const userService = require('./user');
 
 AWS.config.update({region: 'us-east-1'});
 const newUserQueueUrl = "https://sqs.us-east-1.amazonaws.com/461318555119/new-user-billing";
@@ -45,12 +46,14 @@ const sqsApp = Consumer.create({
     handleMessage: async(message) => {
         var json = JSON.parse(message.Body);
         var json2 = JSON.parse(json.Message);
-        console.log(json2);
-        console.log("-----------------------------------------------------");
         var body = {
             email: json2.email,
             cognitoId: json2.userSub
         }
+        userService.create(body).then(function(result){
+        }).catch(function(err){
+            console.log(err);
+        });
     },
     sqs: new AWS.SQS()
 });
