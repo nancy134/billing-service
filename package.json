@@ -1,0 +1,16 @@
+{
+  "name": "billing-service",
+  "version": "1.0.0",
+  "description": "billing-service",
+  "author": "Nancy Piedra <nancy_piedra@yahoo.com>",
+  "main": "server.js",
+  "dependencies": {
+    "aws-sdk": "^2.803.0",
+    "body-parser": "^1.19.0",
+    "braintree": "^3.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "sqs-consumer": "^5.5.0"
+  }
+}
