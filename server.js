@@ -5,6 +5,7 @@ const braintreeAPI = require('./braintreeAPI');
 const AWS = require('aws-sdk');
 const { Consumer } = require('sqs-consumer');
 const userService = require('./user');
+const jwt = require('./jwt');
 
 AWS.config.update({region: 'us-east-1'});
 const newUserQueueUrl = "https://sqs.us-east-1.amazonaws.com/461318555119/new-user-billing";
@@ -22,7 +23,10 @@ app.get('/', (req, res) => {
 });
 
 app.get('/getClientToken', (req, res) => {
-    braintreeAPI.getClientToken().then(function(result){
+    var IdToken = jwt.getToken(req);
+    var cognitoClientId = req.query.cognitoClientId;
+    var cognitoPoolId = req.query.cognitoPoolId;
+    braintreeAPI.getClientToken(IdToken, cognitoClientId, cognitoPoolId).then(function(result){
         res.send(result);
     }).catch(function(err){
         res.send(err);
@@ -30,14 +34,39 @@ app.get('/getClientToken', (req, res) => {
 });
 
 app.get('/findCustomer/:id', (req, res) => {
-    console.log("req.params:");
-    console.log(req.params);
     braintreeAPI.findCustomer(req.params.id).then(function(result){
-        console.log(result);
         res.send(result);
     }).catch(function(err){
-        console.log(err);
         res.send(err);
+    });
+});
+
+app.post('/createCustomer', (req, res) => {
+    var IdToken = jwt.getToken(req);
+    braintreeAPI.createCustomer(IdToken, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.status(500).send(err);
+    });
+});
+
+app.post('/paymentMethod', (req, res) => {
+    var IdToken = jwt.getToken(req);
+    braintreeAPI.createPaymentMethod(IdToken, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.status(500).send(err);
+    });
+});
+
+app.get('/paymentMethod', (req, res) => {
+    var IdToken = jwt.getToken(req);
+    var cognitoClientId = req.query.cognitoClientId;
+    var cognitoPoolId = req.query.cognitoPoolId;
+    braintreeAPI.getPaymentMethod(IdToken, cognitoClientId, cognitoPoolId).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.status(500).send(err);
     });
 });
 
