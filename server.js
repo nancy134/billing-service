@@ -29,7 +29,22 @@ app.get('/getClientToken', (req, res) => {
     braintreeAPI.getClientToken(IdToken, cognitoClientId, cognitoPoolId).then(function(result){
         res.send(result);
     }).catch(function(err){
-        res.send(err);
+        if (err.statusCode){
+            res.status(err.statusCode).send(err);
+        } else {
+            res.send(err);
+        }
+    });
+});
+
+app.get('/axiosTest', (req, res) => {
+    var IdToken = jwt.getToken(req);
+    var cognitoClientId = req.query.cognitoClientId;
+    var cognitoPoolId = req.query.cognitoPoolId;
+    braintreeAPI.axiosTest(IdToken, cognitoClientId, cognitoPoolId).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.status(400).send(err);
     });
 });
 

@@ -15,7 +15,11 @@ exports.verifyToken = function(token, cognitoClientId, cognitoPoolId){
         // Compare client id
         if (decodedJwt.payload.aud === cognitoClientId){
         } else {
-            var err = {status: "Cognito Client id does not match"};
+            var err = {
+                statusCode: 400,
+                code: "InvalidCognitoClientId",
+                message: "Cognito Client id does not match"
+            };
             reject(err);
         }
 
@@ -27,8 +31,12 @@ exports.verifyToken = function(token, cognitoClientId, cognitoPoolId){
                         
         if (decodedJwt.payload.iss === issuerUrl){
         }else{
-            var err = {status: "Issuer URL does not match"};
-            reject();
+            var err = {
+                statusCode: 400,
+                code: "InvalidIssuerURL",
+                message: "Issuer URL does not match"
+            };
+            reject(err);
         }
 
         var url = "https://cognito-idp." +
@@ -53,9 +61,22 @@ exports.verifyToken = function(token, cognitoClientId, cognitoPoolId){
 
             jwt.verify(token, pem, function(err, decoded) {
                 if (err) {
-                    console.log("err:");
-                    console.log(err);
-                    reject(err);
+                    var returnErr = {};
+                    if (err.name === "TokenExpiredError"){
+                        returnErr = {
+                            statusCode: 401,
+                            code: err.name,
+                            message: "Token expired"
+                        };
+                        reject(returnErr);
+                    } else {
+                        return Err = {
+                            statusCode: 400,
+                            code: err.name,
+                            message: err.message
+                        };
+                        reject(returnErr);
+                    }
                 } else {
                     resolve(decoded);
                 }
