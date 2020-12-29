@@ -7,6 +7,7 @@ const { Consumer } = require('sqs-consumer');
 const userService = require('./user');
 const jwt = require('./jwt');
 const billingCycleService = require('./billingCycle');
+const billingSqs = require('./sqs-billing');
 
 AWS.config.update({region: 'us-east-1'});
 const newUserQueueUrl = "https://sqs.us-east-1.amazonaws.com/461318555119/new-user-billing";
