@@ -8,13 +8,9 @@ var gateway = new braintree.BraintreeGateway({
     privateKey: process.env.BRAINTREE_PRIVATE_KEY
 });
 
-function getClientToken(IdToken, cognitoClientId, cognitoPoolId){
+exports.getClientToken = function(authParams){
     return new Promise(function(resolve, reject){
-        jwt.verifyToken(
-            IdToken,
-            cognitoClientId,
-            cognitoPoolId
-        ).then(function(jwtResult){
+        jwt.verifyToken(authParams).then(function(jwtResult){
             gateway.clientToken.generate({customerId: jwtResult["cognito:username"]}).then(function(result){
                 if (result.success){
                     resolve(result);
@@ -38,21 +34,7 @@ function getClientToken(IdToken, cognitoClientId, cognitoPoolId){
     });
 }
 
-function axiosTest(IdToken, cognitoClientId, cognitoPoolId){
-    return new Promise(function(resolve, reject){
-        jwt.verifyToken(
-            IdToken,
-            cognitoClientId,
-            cognitoPoolId
-        ).then(function(jwtResult){
-            resolve(jwtResult);
-        }).catch(function(err){
-            reject(err);
-        });
-    });
-}
-
-function findCustomer(customerId){
+exports.findCustomer = function(customerId){
     return new Promise(function(resolve, reject){
         gateway.customer.find(customerId).then(function(result){
             resolve(result);
@@ -62,14 +44,10 @@ function findCustomer(customerId){
     });
 }
 
-function getPaymentMethod(IdToken, cognitoClientId, cognitoPoolId){
+exports.getPaymentMethod = function(authParams){
     return new Promise(function(resolve, reject){
-        jwt.verifyToken(
-            IdToken,
-            cognitoClientId,
-            cognitoPoolId
-        ).then(function(jwtResult){
-             findCustomer(jwtResult["cognito:username"]).then(function(custResult){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             module.exports.findCustomer(jwtResult["cognito:username"]).then(function(custResult){
                  resolve(custResult);
              }).catch(function(err){
                  reject(err);
@@ -80,14 +58,10 @@ function getPaymentMethod(IdToken, cognitoClientId, cognitoPoolId){
     });
 }
 
-function createPaymentMethod(IdToken, customerData){
+exports.createPaymentMethod = function(authParams, customerData){
     return new Promise(function(resolve, reject){
-        jwt.verifyToken(
-            IdToken,
-            customerData.cognitoClientId,
-            customerData.cognitoPoolId
-        ).then(function(jwtResult){
-            findCustomer(jwtResult["cognito:username"]).then(function(customerResult){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            module.exports.findCustomer(jwtResult["cognito:username"]).then(function(customerResult){
                 resolve(customerResult);
             }).catch(function(err){
                 if (err.type === "notFoundError"){
@@ -111,8 +85,3 @@ function createPaymentMethod(IdToken, customerData){
     });
 }
 
-exports.getClientToken = getClientToken;
-exports.findCustomer = findCustomer;
-exports.createPaymentMethod = createPaymentMethod;
-exports.getPaymentMethod = getPaymentMethod;
-exports.axiosTest = axiosTest;
