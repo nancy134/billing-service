@@ -1,13 +1,6 @@
 const models = require("./models");
 const jwt = require("./jwt");
-
-function notAuthorizedResponse(){
-    ret = {
-        statusCode: 400,
-        message: "You are not authorized to perform this operation"
-    };
-    return ret;
-}
+const utilities = require("./utilities");
 
 exports.create = function(authParms, body){
     return new Promise(function(resolve, reject){
@@ -19,7 +12,7 @@ exports.create = function(authParms, body){
                     reject(err);
                 });
             } else {
-                ret = notAuthorizedResponse();
+                ret = utilities.notAuthorizedResponse();
                 reject(err);
             }
         }).catch(function(err){
@@ -28,18 +21,18 @@ exports.create = function(authParms, body){
     });
 }
 
-exports.getBillingCycles = function(authParams, page, limit, offset, where){
+exports.getBillingCycles = function(authParams, pageParams, where){
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
             models.BillingCycle.findAndCountAll({
                 where: where,
-                limit: limit,
-                offset: offset,
+                limit: pageParams.limit,
+                offset: pageParams.offset,
                 attributes: ['id', 'start', 'end']
             }).then(function(result){
                 var ret = {
-                    page: page,
-                    perPage: limit,
+                    page: pageParams.page,
+                    perPage: pageParams.limit,
                     billingCycles: result
                 };
                 resolve(ret);
@@ -52,5 +45,26 @@ exports.getBillingCycles = function(authParams, page, limit, offset, where){
     });
 }
 
+exports.getBillingCycle = function(authParams, id){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.BillingCycle.findOne({
+                    where: {id: id},
+                    attributes: ['id', 'start', 'end']
+                }).then(function(billingCycle){
+                    resolve(billingCycle);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                ret = utilities.notAuthorizedResponse();
+                reject(err);
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
 
 

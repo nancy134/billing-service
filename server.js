@@ -7,7 +7,9 @@ const { Consumer } = require('sqs-consumer');
 const userService = require('./user');
 const jwt = require('./jwt');
 const billingCycleService = require('./billingCycle');
+const billingEventService = require('./billingEvent');
 const billingSqs = require('./sqs-billing');
+const utilities = require('./utilities');
 
 AWS.config.update({region: 'us-east-1'});
 const newUserQueueUrl = "https://sqs.us-east-1.amazonaws.com/461318555119/new-user-billing";
@@ -64,23 +66,52 @@ app.post('/billingCycles', (req, res) => {
     billingCycleService.create(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
-        console.log(err);
         errorResponse(res, err);
     });
 });
 
 app.get('/billingCycles', (req, res) => {
-    var page = req.query.page || 1;
-    var limit = req.query.perPage || 20;
-    var offset = (parseInt(page)-1)*parseInt(limit);
-    var authParams = jwt.getAuthParams(req);
+    var pageParams = utilities.getPageParams(req);
     var where = null;
     var authParams = jwt.getAuthParams(req);
-    billingCycleService.getBillingCycles(authParams, page, limit, offset, where).then(function(result){
+    billingCycleService.getBillingCycles(authParams, pageParams, where).then(function(result){
         res.send(result);
     }).catch(function(err){
-        console.log(err);
         errorResponse(res, err);
+    });
+});
+
+app.get('/billingCycles/:id', (req, res) => {
+    var id = req.params.id;
+    var authParams = jwt.getAuthParams(req);
+    billingCycleService.getBillingCycle(authParams, id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/billingEvents', (req, res) => {
+    var pageParams = utilities.getPageParams(req);
+    var authParams = jwt.getAuthParams(req);
+    var where = null;
+    billingEventService.getBillingEvents(authParams, pageParams, where).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.delete('/billingCycles/:id/billingEvents', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    var id = req.params.id;
+    billingEventService.deleteBillingEvents(authParams, id).then(function(result){
+        console.log(result);
+        res.send("ok");
+    }).catch(function(err){
+        console.log(err);
+        res.send("error");
+        //errorResponse(res, err);
     });
 });
 
