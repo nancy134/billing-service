@@ -13,7 +13,7 @@ exports.create = function(authParms, body){
                 });
             } else {
                 ret = utilities.notAuthorizedResponse();
-                reject(err);
+                reject(ret);
             }
         }).catch(function(err){
             reject(err);
@@ -59,7 +59,7 @@ exports.getBillingCycle = function(authParams, id){
                 });
             } else {
                 ret = utilities.notAuthorizedResponse();
-                reject(err);
+                reject(ret);
             }
         }).catch(function(err){
             reject(err);

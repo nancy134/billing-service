@@ -20,7 +20,15 @@ exports.getBillingEvents = function(authParams, pageParams, where){
                     where: {owner: jwtResult["cognito:username"]},
                     limit: pageParams.limit,
                     offset: pageParams.offset,
-                    attributes: ['id', 'start', 'end', 'ListingId', 'owner']
+                    attributes: [
+                        'id',
+                        'start',
+                        'end',
+                        'ListingId',
+                        'owner',
+                        'daysOnMarket',
+                        'cost'
+                    ]
                 }).then(function(result){
                     var ret = {
                         page: pageParams.page,
@@ -33,7 +41,7 @@ exports.getBillingEvents = function(authParams, pageParams, where){
                 });
             } else {
                  ret = utilities.notAuthorizedResponse();
-                 reject(err);
+                 reject(ret);
             }
         }).catch(function(err){
             reject(err);

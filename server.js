@@ -98,6 +98,7 @@ app.get('/billingEvents', (req, res) => {
     billingEventService.getBillingEvents(authParams, pageParams, where).then(function(result){
         res.send(result);
     }).catch(function(err){
+        console.log(err);
         errorResponse(res, err);
     });
 });
@@ -106,7 +107,6 @@ app.delete('/billingCycles/:id/billingEvents', (req, res) => {
     var authParams = jwt.getAuthParams(req);
     var id = req.params.id;
     billingEventService.deleteBillingEvents(authParams, id).then(function(result){
-        console.log(result);
         res.send("ok");
     }).catch(function(err){
         console.log(err);
