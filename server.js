@@ -91,14 +91,24 @@ app.get('/billingCycles/:id', (req, res) => {
     });
 });
 
-app.get('/billingEvents', (req, res) => {
+app.get('/billingCycles/:id/billingEvents', (req, res) => {
     var pageParams = utilities.getPageParams(req);
     var authParams = jwt.getAuthParams(req);
-    var where = null;
+    var where = {BillingCycleId: req.params.id};
     billingEventService.getBillingEvents(authParams, pageParams, where).then(function(result){
         res.send(result);
     }).catch(function(err){
-        console.log(err);
+        errorResponse(res, err);
+    });
+});
+
+app.get('/billingCycles/:id/billingEvents/me', (req, res) => {
+    var pageParams = utilities.getPageParams(req);
+    var authParams = jwt.getAuthParams(req);
+    var where = {BillingCycleId: req.params.id};
+    billingEventService.getBillingEventsMe(authParams, pageParams, where).then(function(result){
+        res.send(result);
+    }).catch(function(err){
         errorResponse(res, err);
     });
 });
@@ -109,9 +119,7 @@ app.delete('/billingCycles/:id/billingEvents', (req, res) => {
     billingEventService.deleteBillingEvents(authParams, id).then(function(result){
         res.send("ok");
     }).catch(function(err){
-        console.log(err);
         res.send("error");
-        //errorResponse(res, err);
     });
 });
 

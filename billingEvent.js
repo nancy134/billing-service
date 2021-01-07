@@ -17,7 +17,7 @@ exports.getBillingEvents = function(authParams, pageParams, where){
         jwt.verifyToken(authParams).then(function(jwtResult){
             if (jwt.isAdmin(jwtResult)){
                 models.BillingEvent.findAndCountAll({
-                    where: {owner: jwtResult["cognito:username"]},
+                    where: where,
                     limit: pageParams.limit,
                     offset: pageParams.offset,
                     attributes: [
@@ -43,6 +43,39 @@ exports.getBillingEvents = function(authParams, pageParams, where){
                  ret = utilities.notAuthorizedResponse();
                  reject(ret);
             }
+        }).catch(function(err){
+            reject(err);
+        });
+    })
+}
+
+exports.getBillingEventsMe = function(authParams, pageParams, where){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            where.owner =  jwtResult["cognito:username"];
+            models.BillingEvent.findAndCountAll({
+                where: where,
+                limit: pageParams.limit,
+                offset: pageParams.offset,
+                attributes: [
+                    'id',
+                    'start',
+                    'end',
+                    'ListingId',
+                    'owner',
+                    'daysOnMarket',
+                    'cost'
+                ]
+            }).then(function(result){
+                var ret = {
+                    page: pageParams.page,
+                    perPage: pageParams.limit,
+                    billingEvents: result
+                };
+                resolve(ret);
+            }).catch(function(err){
+                reject(err);
+            });
         }).catch(function(err){
             reject(err);
         });

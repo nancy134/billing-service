@@ -28,7 +28,7 @@ exports.getBillingCycles = function(authParams, pageParams, where){
                 where: where,
                 limit: pageParams.limit,
                 offset: pageParams.offset,
-                attributes: ['id', 'start', 'end']
+                attributes: ['id', 'start', 'end', 'startDate', 'endDate']
             }).then(function(result){
                 var ret = {
                     page: pageParams.page,
