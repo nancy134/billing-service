@@ -50,7 +50,15 @@ exports.getPaymentMethod = function(authParams){
              module.exports.findCustomer(jwtResult["cognito:username"]).then(function(custResult){
                  resolve(custResult);
              }).catch(function(err){
-                 reject(err);
+                 if (err.type === "notFoundError"){
+                     var retErr = {
+                         statusCode: 400,
+                         errorCode: "notFoundError"
+                     };
+                     reject(retErr);
+                 } else {
+                     reject(err);
+                 }
              });
         }).catch(function(err){
             reject(err);
