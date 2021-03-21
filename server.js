@@ -12,7 +12,7 @@ const billingSqs = require('./sqs-billing');
 const utilities = require('./utilities');
 
 AWS.config.update({region: 'us-east-1'});
-const newUserQueueUrl = "https://sqs.us-east-1.amazonaws.com/461318555119/new-user-billing";
+const newUserQueueUrl = process.env.AWS_SQS_NEW_USER_BILLING_QUEUE;
 
 const PORT = 8080;
 const HOST = '0.0.0.0';
