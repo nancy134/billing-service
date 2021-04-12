@@ -1,6 +1,6 @@
 const models = require("./models");
 
-var create = function(body, t){
+exports.create = function(body, t){
     return new Promise(function(resolve, reject){
         models.User.findOrCreate({
            where: body,
@@ -14,5 +14,19 @@ var create = function(body, t){
     });
 }
 
-exports.create = create;
+exports.findByCognitoId = function(cognitoId){
+    return new Promise(function(resolve, reject){
+        models.User.findOne({
+            where: {
+                cognitoId: cognitoId
+            },
+            attributes: ['id', 'cognitoId', 'email']
+        }).then(function(user){
+            resolve(user);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
 

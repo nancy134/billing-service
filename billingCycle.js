@@ -67,4 +67,26 @@ exports.getBillingCycle = function(authParams, id){
     });
 }
 
+exports.deleteBillingCycle = function(authParams, id, t){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.BillingCycle.destroy({
+                    where: {
+                        id: id,
+                    },
+                    transaction: t
+                }).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorizedResponse());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
 

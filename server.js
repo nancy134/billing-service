@@ -10,6 +10,8 @@ const billingCycleService = require('./billingCycle');
 const billingEventService = require('./billingEvent');
 const billingSqs = require('./sqs-billing');
 const utilities = require('./utilities');
+const promotionService = require('./promotion');
+const codeService = require('./code');
 
 AWS.config.update({region: 'us-east-1'});
 const newUserQueueUrl = process.env.AWS_SQS_NEW_USER_BILLING_QUEUE;
@@ -91,6 +93,15 @@ app.get('/billingCycles/:id', (req, res) => {
     });
 });
 
+app.delete('/billingCycles/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    billingCycleService.deleteBillingCycle(authParams, req.params.id).then(function(result){
+        res.send("ok");
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
 app.get('/billingCycles/:id/billingEvents', (req, res) => {
     var pageParams = utilities.getPageParams(req);
     var authParams = jwt.getAuthParams(req);
@@ -120,6 +131,56 @@ app.delete('/billingCycles/:id/billingEvents', (req, res) => {
         res.send("ok");
     }).catch(function(err){
         res.send("error");
+    });
+});
+
+
+app.post('/promotions', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    promotionService.create(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/promotions', (req, res) => {
+    var pageParams = utilities.getPageParams(req);
+    var where = null;
+    var authParams = jwt.getAuthParams(req);
+    promotionService.getPromotions(authParams, pageParams, where).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        console.log(err);
+        errorResponse(res, err);
+    });
+});
+
+app.put('/promotions/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    promotionService.updatePromotion(authParams, req.params.id, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.delete('/promotions/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    promotionService.deletePromotion(authParams, req.params.id).then(function(result){
+        res.send("ok");
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.post('/users/:id/promotions', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    var cognitoId = req.params.id;
+    userPromotionService.create(authParams, cognitoId, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
     });
 });
 
