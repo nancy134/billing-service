@@ -12,7 +12,7 @@ exports.create = function(authParms, body){
                     reject(err);
                 });
             } else {
-                ret = utilities.notAuthorizedResponse();
+                ret = utilities.notAuthorized();
                 reject(ret);
             }
         }).catch(function(err){
@@ -58,7 +58,7 @@ exports.getBillingCycle = function(authParams, id){
                     reject(err);
                 });
             } else {
-                ret = utilities.notAuthorizedResponse();
+                ret = utilities.notAuthorized();
                 reject(ret);
             }
         }).catch(function(err){
@@ -82,7 +82,7 @@ exports.deleteBillingCycle = function(authParams, id, t){
                     reject(err);
                 });
             } else {
-                reject(utilities.notAuthorizedResponse());
+                reject(utilities.notAuthorized());
             }
         }).catch(function(err){
             reject(err);

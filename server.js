@@ -151,7 +151,6 @@ app.get('/promotions', (req, res) => {
     promotionService.getPromotions(authParams, pageParams, where).then(function(result){
         res.send(result);
     }).catch(function(err){
-        console.log(err);
         errorResponse(res, err);
     });
 });
@@ -174,11 +173,41 @@ app.delete('/promotions/:id', (req, res) => {
     });
 });
 
-app.post('/users/:id/promotions', (req, res) => {
+app.post('/promotions/:id/codes', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    var cognitoId = req.params.id;
-    userPromotionService.create(authParams, cognitoId, req.body).then(function(result){
+    var id = req.params.id;
+    req.body.PromotionId = id;
+    codeService.create(authParams, req.body).then(function(result){
         res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/promotions/:id/codes', (req, res) => {
+    var pageParams = utilities.getPageParams(req);
+    var where = {PromotionId: req.params.id};
+    var authParams = jwt.getAuthParams(req);
+    codeService.getCodes(authParams, pageParams, where).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.put('/codes/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    codeService.updateCode(authParams, req.params.id, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.delete('/codes/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    codeService.deleteCode(authParams, req.params.id).then(function(result){
+        res.send("ok");
     }).catch(function(err){
         errorResponse(res, err);
     });

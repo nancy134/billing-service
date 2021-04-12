@@ -40,7 +40,7 @@ exports.getBillingEvents = function(authParams, pageParams, where){
                     reject(err);
                 });
             } else {
-                 ret = utilities.notAuthorizedResponse();
+                 ret = utilities.notAuthorized();
                  reject(ret);
             }
         }).catch(function(err){
