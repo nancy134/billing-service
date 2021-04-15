@@ -12,6 +12,7 @@ const billingSqs = require('./sqs-billing');
 const utilities = require('./utilities');
 const promotionService = require('./promotion');
 const codeService = require('./code');
+const userCodeService = require('./userCode');
 
 AWS.config.update({region: 'us-east-1'});
 const newUserQueueUrl = process.env.AWS_SQS_NEW_USER_BILLING_QUEUE;
@@ -195,6 +196,16 @@ app.get('/promotions/:id/codes', (req, res) => {
     });
 });
 
+app.get('/codes', (req, res) => {
+    var pageParams = utilities.getPageParams(req);
+    var authParams = jwt.getAuthParams(req);
+    codeService.getCodes(authParams, pageParams).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
 app.put('/codes/:id', (req, res) => {
     var authParams = jwt.getAuthParams(req);
     codeService.updateCode(authParams, req.params.id, req.body).then(function(result){
@@ -208,6 +219,27 @@ app.delete('/codes/:id', (req, res) => {
     var authParams = jwt.getAuthParams(req);
     codeService.deleteCode(authParams, req.params.id).then(function(result){
         res.send("ok");
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/users', (req, res) => {
+    var pageParams = utilities.getPageParams(req);
+    var where = null;
+    var authParams = jwt.getAuthParams(req);
+    userService.getUsers(authParams, pageParams, where).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.post('/users/:id/codes', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    req.body.UserId = req.params.id;
+    userCodeService.create(authParams, req.body).then(function(result){
+        res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
     });

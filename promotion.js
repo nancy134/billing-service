@@ -32,7 +32,7 @@ exports.getPromotions = function(authParams, pageParams, where){
                     where: where,
                     limit: pageParams.limit,
                     offset: pageParams.offset,
-                    attributes: ['id', 'description']
+                    attributes: ['id', 'name', 'description']
                 }).then(function(result){
                     var ret = {
                         page: pageParams.page,

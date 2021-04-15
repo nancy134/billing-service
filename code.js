@@ -21,7 +21,6 @@ exports.create = function(authParams, body, t){
                 reject(utilities.notAuthorized());
             }
         }).catch(function(err){
-            console.log(err);
             reject(err);
         });
     });
@@ -35,12 +34,51 @@ exports.getCodes = function(authParams, pageParams, where){
                     where: where,
                     limit: pageParams.limit,
                     offset: pageParams.offset,
-                    attributes: ['id', 'description','PromotionId']
+                    raw: true,
+                    attributes: ['id', 'description','code','PromotionId'],
+                    include: [
+                        {
+                            model: models.User,
+                            as: 'user',
+                            attributes: ['email', 'cognitoId']
+                        },
+                        {
+                            model: models.Promotion,
+                            attributes: ['name', 'description']
+                        }
+                    ]
                 }).then(function(result){
                     var ret = {
                         page: pageParams.page,
                         perPage: pageParams.limit,
-                        promotions: result
+                        codes: result
+                    };
+                    resolve(ret);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+exports.getAllCodes = function(authParams, pageParams){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.Code.findAndCountAll({
+                    limit: pageParams.limit,
+                    offset: pageParams.offset,
+                    attributes: ['id', 'description','code','PromotionId']
+                }).then(function(result){
+                    var ret = {
+                        page: pageParams.page,
+                        perPage: pageParams.limit,
+                        codes: result
                     };
                     resolve(ret);
                 }).catch(function(err){

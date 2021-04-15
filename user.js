@@ -1,4 +1,6 @@
 const models = require("./models");
+const jwt = require('./jwt');
+const utilities = require('./utilities');
 
 exports.create = function(body, t){
     return new Promise(function(resolve, reject){
@@ -29,4 +31,31 @@ exports.findByCognitoId = function(cognitoId){
     });
 }
 
+exports.getUsers = function(authParams, pageParams, where){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.User.findAndCountAll({
+                    where: where,
+                    limit: pageParams.limit,
+                    offset: pageParams.offset,
+                    attributes: ['id', 'email', 'cognitoId']
+                }).then(function(result){
+                    var ret = {
+                        page: pageParams.page,
+                        perPage: pageParams.limit,
+                        users: result
+                    };
+                    resolve(ret);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
 

@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Code.associate = function(models) {
         Code.belongsTo(models.Promotion);
+        Code.belongsToMany(models.User, {as: 'user', through: models.UserCode});
     };
     
     return Code;
