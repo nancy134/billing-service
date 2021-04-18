@@ -245,6 +245,25 @@ app.post('/users/:id/codes', (req, res) => {
     });
 });
 
+app.post('/codes/validate', (req, res) => {
+    console.log("/codes/validate");
+    var authParams = jwt.getAuthParams(req);
+    userCodeService.validate(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/users/codes/me', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    userCodeService.findUserCodeMe(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
 const sqsApp = Consumer.create({
     queueUrl: newUserQueueUrl,
     handleMessage: async(message) => {

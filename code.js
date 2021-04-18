@@ -143,3 +143,23 @@ exports.deleteCode = function(authParams, id, t){
         });
     });
 }
+
+exports.findByPromoCode = function(code){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            models.Code.findOne({
+                where: {
+                    code: code
+                },
+                attributes: ['id', 'code']
+            }).then(function(code){
+                resolve(code);
+            }).catch(function(err){
+                reject(err);
+            });
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
