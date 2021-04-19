@@ -108,8 +108,6 @@ exports.validate = function(authParams, body){
                                 exports.create(authParams, body).then(function(userCode){
                                     resolve(userCode);
                                 }).catch(function(err){
-                                    console.log("err5:");
-                                    console.log(err);
                                     reject(err);
                                 });
                             } else {
@@ -130,18 +128,12 @@ exports.validate = function(authParams, body){
                         reject(msg);
                     }
                 }).catch(function(err){
-                    console.log("err3:");
-                    console.log(err);
                     reject(err);
                 });
             }).catch(function(err){
-                console.log("err2:");
-                console.log(err);
                 reject(err);
             });
         }).catch(function(err){
-            console.log("err1:");
-            console.log(err);
             reject(err);
         });
     });

@@ -246,7 +246,6 @@ app.post('/users/:id/codes', (req, res) => {
 });
 
 app.post('/codes/validate', (req, res) => {
-    console.log("/codes/validate");
     var authParams = jwt.getAuthParams(req);
     userCodeService.validate(authParams, req.body).then(function(result){
         res.send(result);
