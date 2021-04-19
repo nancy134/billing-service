@@ -6,11 +6,8 @@ exports.create = function(authParams, body, t){
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
             if (jwt.isAdmin(jwtResult)){
-                models.Promotion.findOrCreate({
-                    where: body,
-                    transaction: t
-                }).then(function(result){
-                    var promotion = result[0].get({plain: true});
+                models.Promotion.create(body)
+                .then(function(promotion){
                     resolve(promotion);
                 }).catch(function(err){
                     reject(err);
