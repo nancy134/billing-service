@@ -106,7 +106,11 @@ exports.validate = function(authParams, body){
                                     CodeId: code.id
                                 };
                                 exports.create(authParams, body).then(function(userCode){
-                                    resolve(userCode);
+                                    exports.findUserCodeMe().then(function(userCodeFull){
+                                        resolve(userCodeFull);
+                                    }).catch(function(err){
+                                        reject(err);
+                                    });
                                 }).catch(function(err){
                                     reject(err);
                                 });
