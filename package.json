@@ -24,7 +24,8 @@
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "sequelize": "^6.6.2",
-    "sqs-consumer": "^5.5.0"
+    "sqs-consumer": "^5.5.0",
+    "stripe": "^8.161.0"
   },
   "devDependencies": {
     "chai": "^4.3.4",

@@ -13,6 +13,7 @@ const utilities = require('./utilities');
 const promotionService = require('./promotion');
 const codeService = require('./code');
 const userCodeService = require('./userCode');
+const stripeService = require('./stripe');
 
 AWS.config.update({region: 'us-east-1'});
 const newUserQueueUrl = process.env.AWS_SQS_NEW_USER_BILLING_QUEUE;
@@ -257,6 +258,113 @@ app.post('/codes/validate', (req, res) => {
 app.get('/users/codes/me', (req, res) => {
     var authParams = jwt.getAuthParams(req);
     userCodeService.findUserCodeMe(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.post('/stripe/customers', (req, res) => {
+    stripeService.createCustomer(req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/stripe/customers', (req, res) => {
+    stripeService.listCustomers(req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.post('/stripe/products', (req, res) => {
+    stripeService.createProduct(req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/stripe/products', (req, res) => {
+    stripeService.listProducts().then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.post('/stripe/prices', (req, res) => {
+    stripeService.createPrice(req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/stripe/prices', (req, res) => {
+    stripeService.listPrices().then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.post('/stripe/invoices', (req, res) => {
+    stripeService.createInvoice(req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/stripe/invoices', (req, res) => {
+    stripeService.listInvoices().then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.post('/stripe/invoiceItems', (req, res) => {
+    stripeService.createInvoiceItem(req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/stripe/invoiceItems', (req, res) => {
+    stripeService.listInvoiceItems().then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.post('/paymentSecret/me', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.createPaymentSecret(authParams).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/paymentMethod/me', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.getPaymentMethodMe(authParams).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/setupIntents', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.getSetupIntents(authParams).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
