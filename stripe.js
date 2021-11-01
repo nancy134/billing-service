@@ -332,9 +332,9 @@ exports.finalizeInvoice = function(id){
     });
 }
 
-exports.payInvoice = function(id){
+exports.payInvoice = function(id, body){
     return new Promise(function(resolve, reject){
-        stripe.invoices.pay(id).then(function(result){
+        stripe.invoices.pay(id, body).then(function(result){
             resolve(result);
         }).catch(function(err){
             reject(err);

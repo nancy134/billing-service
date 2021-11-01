@@ -414,7 +414,7 @@ app.post('/stripe/invoices/:id/finalize', (req, res) => {
 });
 
 app.post('/stripe/invoices/:id/pay', (req, res) => {
-    stripeService.payInvoice(req.params.id).then(function(result){
+    stripeService.payInvoice(req.params.id, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
