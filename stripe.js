@@ -310,3 +310,35 @@ exports.createPaymentSecret = function(authParams){
         });
     });
 }
+
+exports.getInvoice = function(id){
+    return new Promise(function(resolve, reject){
+        stripe.invoices.retrieve(id).then(function(result){
+            resolve(result);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+
+exports.finalizeInvoice = function(id){
+    return new Promise(function(resolve, reject){
+        stripe.invoices.finalizeInvoice(id).then(function(result){
+            resolve(result);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+exports.payInvoice = function(id){
+    return new Promise(function(resolve, reject){
+        stripe.invoices.pay(id).then(function(result){
+            resolve(result);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+

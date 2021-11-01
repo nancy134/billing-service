@@ -397,6 +397,31 @@ const sqsApp = Consumer.create({
     sqs: new AWS.SQS()
 });
 
+app.get('/stripe/invoices/:id', (req, res) => {
+    stripeService.getInvoice(req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.post('/stripe/invoices/:id/finalize', (req, res) => {
+    stripeService.finalizeInvoice(req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.post('/stripe/invoices/:id/pay', (req, res) => {
+    stripeService.payInvoice(req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
 sqsApp.on('error', (err) => {
     console.log(err);
 });
