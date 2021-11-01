@@ -104,6 +104,15 @@ app.delete('/billingCycles/:id', (req, res) => {
     });
 });
 
+app.put('/billingCycles/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    billingCycleService.updateBillingCycle(authParams, req.params.id, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
 app.get('/billingCycles/:id/billingEvents', (req, res) => {
     var pageParams = utilities.getPageParams(req);
     var authParams = jwt.getAuthParams(req);

@@ -90,3 +90,28 @@ exports.deleteBillingCycle = function(authParams, id, t){
     });
 }
 
+exports.updateBillingCycle = function(authParams, id, body, t){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.BillingCycle.update(
+                    body,
+                    {
+                        returning: true,
+                        where: {id: id},
+                        transaction: t
+                    }
+                ).then(function([rowsUpdate, [billingCycle]]){
+                    resolve(billingCycle);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
