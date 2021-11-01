@@ -397,6 +397,14 @@ const sqsApp = Consumer.create({
     sqs: new AWS.SQS()
 });
 
+app.get('/stripe/invoices/upcoming', (req, res) => {
+    stripeService.getUpcomingInvoices(req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
 app.get('/stripe/invoices/:id', (req, res) => {
     stripeService.getInvoice(req.params.id).then(function(result){
         res.send(result);
