@@ -446,6 +446,13 @@ app.get('/stripe/invoices/upcoming', (req, res) => {
     });
 });
 
+app.get('/stripe/invoices/upcoming/lines', (req, res) => {
+    stripeService.getUpcomingLineItems(req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
 
 
 

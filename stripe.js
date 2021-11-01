@@ -361,3 +361,13 @@ exports.getUpcomingInvoices = function(body){
         });
     });
 }
+
+exports.getUpcomingLineItems = function(body){
+    return new Promise(function(resolve, reject){
+        stripe.invoices.listUpcomingLineItems(body).then(function(result){
+            resolve(result);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
