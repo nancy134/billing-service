@@ -2,6 +2,8 @@ const userService = require('./user');
 const jwt = require('./jwt');
 
 const stripe = require('stripe')(process.env.STRIPE_SK);
+const utilities = require("./utilities");
+
 
 exports.createCustomer = function(params){
     return new Promise(function(resolve, reject){
@@ -13,10 +15,30 @@ exports.createCustomer = function(params){
     });
 }
 
+//exports.listCustomers = function(params){
+//    return new Promise(function(resolve, reject){
+//        stripe.customers.list(params).then(function(result){
+//           resolve(result);
+//        }).catch(function(err){
+//            reject(err);
+//        });
+//    });
+//}
+
 exports.listCustomers = function(params){
     return new Promise(function(resolve, reject){
-        stripe.customers.list(params).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+
+                stripe.customers.list(params).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });
@@ -43,10 +65,20 @@ exports.createProduct = function(params){
     });
 }
 
-exports.listProducts = function(){
+exports.listProducts = function(authParams, params){
     return new Promise(function(resolve, reject){
-        stripe.products.list({}).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+
+                stripe.products.list(params).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });
@@ -63,10 +95,20 @@ exports.createPrice = function(params){
     });
 }
 
-exports.listPrices = function(){
+exports.listPrices = function(authParams, params){
     return new Promise(function(resolve, reject){
-        stripe.prices.list({}).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+
+                stripe.prices.list(params).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });
@@ -83,13 +125,23 @@ exports.createInvoice = function(params){
     });
 }
 
-exports.listInvoices = function(){
+exports.listInvoices = function(authParams, params){
     return new Promise(function(resolve, reject){
-        stripe.invoices.list({}).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+
+                stripe.invoices.list(params).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
-        }); 
+        });
     });
 }
 
@@ -103,10 +155,20 @@ exports.createInvoiceItem = function(params){
     });
 }
 
-exports.listInvoiceItems = function(params){
+exports.listInvoiceItems = function(authParams, params){
     return new Promise(function(resolve, reject){
-        stripe.invoiceItems.list().then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+
+                stripe.invoiceItems.list(params).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });
@@ -311,10 +373,19 @@ exports.createPaymentSecret = function(authParams){
     });
 }
 
-exports.getInvoice = function(id){
+exports.getInvoice = function(authParams, id){
     return new Promise(function(resolve, reject){
-        stripe.invoices.retrieve(id).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+                stripe.invoices.retrieve(id).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });
@@ -362,10 +433,19 @@ exports.getUpcomingInvoices = function(body){
     });
 }
 
-exports.getUpcomingLineItems = function(body){
+exports.getUpcomingLineItems = function(authParams, body){
     return new Promise(function(resolve, reject){
-        stripe.invoices.listUpcomingLineItems(body).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+                stripe.invoices.retrieve(body).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });

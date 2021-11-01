@@ -274,6 +274,7 @@ app.get('/users/codes/me', (req, res) => {
 });
 
 app.post('/stripe/customers', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
     stripeService.createCustomer(req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -282,6 +283,7 @@ app.post('/stripe/customers', (req, res) => {
 });
 
 app.get('/stripe/customers', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
     stripeService.listCustomers(req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -290,6 +292,7 @@ app.get('/stripe/customers', (req, res) => {
 });
 
 app.post('/stripe/products', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
     stripeService.createProduct(req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -297,15 +300,27 @@ app.post('/stripe/products', (req, res) => {
     });
 });
 
+//app.get('/stripe/products', (req, res) => {
+//    var authParams = jwt.getAuthParams(req);
+//    stripeService.listProducts().then(function(result){
+//        res.send(result);
+//    }).catch(function(err){
+//        errorResponse(res, err);
+//    });
+//});
+
 app.get('/stripe/products', (req, res) => {
-    stripeService.listProducts().then(function(result){
+    var authParams = jwt.getAuthParams(req);
+    stripeService.listProducts(authParams).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
     });
 });
 
+
 app.post('/stripe/prices', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
     stripeService.createPrice(req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -314,14 +329,17 @@ app.post('/stripe/prices', (req, res) => {
 });
 
 app.get('/stripe/prices', (req, res) => {
-    stripeService.listPrices().then(function(result){
+    var authParams = jwt.getAuthParams(req);
+    stripeService.listPrices(authParams).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
     });
 });
 
+
 app.post('/stripe/invoices', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
     stripeService.createInvoice(req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -330,7 +348,8 @@ app.post('/stripe/invoices', (req, res) => {
 });
 
 app.get('/stripe/invoices', (req, res) => {
-    stripeService.listInvoices().then(function(result){
+    var authParams = jwt.getAuthParams(req);
+    stripeService.listInvoices(authParams).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
@@ -338,6 +357,7 @@ app.get('/stripe/invoices', (req, res) => {
 });
 
 app.post('/stripe/invoiceItems', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
     stripeService.createInvoiceItem(req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -346,7 +366,8 @@ app.post('/stripe/invoiceItems', (req, res) => {
 });
 
 app.get('/stripe/invoiceItems', (req, res) => {
-    stripeService.listInvoiceItems().then(function(result){
+    var authParams = jwt.getAuthParams(req);
+    stripeService.listInvoiceItems(authParams).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
@@ -398,6 +419,7 @@ const sqsApp = Consumer.create({
 });
 
 app.get('/stripe/invoices/upcoming', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
     stripeService.getUpcomingInvoices(req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -406,7 +428,8 @@ app.get('/stripe/invoices/upcoming', (req, res) => {
 });
 
 app.get('/stripe/invoices/:id', (req, res) => {
-    stripeService.getInvoice(req.params.id).then(function(result){
+    var authParams = jwt.getAuthParams(req);
+    stripeService.getInvoice(authParams, req.params.id).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
@@ -414,6 +437,7 @@ app.get('/stripe/invoices/:id', (req, res) => {
 });
 
 app.post('/stripe/invoices/:id/finalize', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
     stripeService.finalizeInvoice(req.params.id).then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -422,6 +446,7 @@ app.post('/stripe/invoices/:id/finalize', (req, res) => {
 });
 
 app.post('/stripe/invoices/:id/pay', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
     stripeService.payInvoice(req.params.id, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -430,6 +455,7 @@ app.post('/stripe/invoices/:id/pay', (req, res) => {
 });
 
 app.get('/stripe/invoices/upcoming/lines', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
     stripeService.getUpcomingLineItems(req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -438,7 +464,8 @@ app.get('/stripe/invoices/upcoming/lines', (req, res) => {
 });
 
 app.get('/stripe/invoices/:id/lines', (req, res) => {
-    stripeService.listLineItems(req.params.id).then(function(result){
+    var authParams = jwt.getAuthParams(req);
+    stripeService.getUpcomingLineItems(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
