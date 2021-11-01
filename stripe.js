@@ -342,3 +342,22 @@ exports.payInvoice = function(id, body){
     });
 }
 
+exports.listLineItems = function(id){
+    return new Promise(function(resolve, reject){
+        stripe.invoices.listLineItems(id).then(function(result){
+            resolve(result);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+exports.getUpcomingInvoices = function(body){
+    return new Promise(function(resolve, reject){
+        stripe.invoices.retrieveUpcoming(body).then(function(result){
+            resolve(result);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}

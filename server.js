@@ -421,6 +421,27 @@ app.post('/stripe/invoices/:id/pay', (req, res) => {
     });
 });
 
+app.get('/stripe/invoices/:id/lines', (req, res) => {
+    stripeService.listLineItems(req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
+app.get('/stripe/invoices/upcoming', (req, res) => {
+    stripeService.getUpcomingInvoices(req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
+
+
+
 
 sqsApp.on('error', (err) => {
     console.log(err);
