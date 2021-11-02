@@ -430,20 +430,38 @@ exports.getInvoice = function(authParams, id){
 }
 
 
-exports.finalizeInvoice = function(id){
+exports.finalizeInvoice = function(authParams, id){
     return new Promise(function(resolve, reject){
-        stripe.invoices.finalizeInvoice(id).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+                stripe.invoices.finalizeInvoice(id).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });
     });
 }
 
-exports.payInvoice = function(id, body){
+exports.payInvoice = function(authParams, id, body){
     return new Promise(function(resolve, reject){
-        stripe.invoices.pay(id, body).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+                stripe.invoices.pay(id, body).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });

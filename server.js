@@ -441,16 +441,17 @@ app.get('/stripe/invoices/:id', (req, res) => {
 
 app.post('/stripe/invoices/:id/finalize', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    stripeService.finalizeInvoice(req.params.id).then(function(result){
+    stripeService.finalizeInvoice(authParams, req.params.id).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
     });
 });
 
+
 app.post('/stripe/invoices/:id/pay', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    stripeService.payInvoice(req.params.id, req.body).then(function(result){
+    stripeService.payInvoice(authParams, req.params.id, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
