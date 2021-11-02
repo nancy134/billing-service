@@ -486,6 +486,21 @@ app.post('/products', (req, res) => {
     });
 });
 
+app.get('/products', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    var pageParams = utilities.getPageParams(req);
+    var where = null;
+    productService.getProducts(authParams).then(function(result){
+        res.send(result);
+
+
+        
+    }).catch(function(err){
+        console.log(err);
+        errorResponse(res, err);
+    });
+});
+
 
 sqsApp.on('error', (err) => {
     console.log(err);
