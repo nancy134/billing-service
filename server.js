@@ -465,7 +465,7 @@ app.get('/stripe/invoices/upcoming/lines', (req, res) => {
 
 app.get('/stripe/invoices/:id/lines', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    stripeService.getUpcomingLineItems(authParams, req.body).then(function(result){
+    stripeService.listLineItems(authParams, req.params.id).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);

@@ -413,10 +413,19 @@ exports.payInvoice = function(id, body){
     });
 }
 
-exports.listLineItems = function(id){
+exports.listLineItems = function(authParams, id){
     return new Promise(function(resolve, reject){
-        stripe.invoices.listLineItems(id).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+                stripe.invoices.listLineItems(id).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });
