@@ -139,7 +139,7 @@ exports.createInvoice = function(authParams, params){
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
              if (jwt.isAdmin(jwtResult)){
-                stripe.invoice.create(params).then(function(result){
+                stripe.invoices.create(params).then(function(result){
                     resolve(result);
                 }).catch(function(err){
                     reject(err);
