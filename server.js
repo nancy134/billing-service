@@ -14,6 +14,7 @@ const promotionService = require('./promotion');
 const codeService = require('./code');
 const userCodeService = require('./userCode');
 const stripeService = require('./stripe');
+const productService = require('./product');
 
 AWS.config.update({region: 'us-east-1'});
 const newUserQueueUrl = process.env.AWS_SQS_NEW_USER_BILLING_QUEUE;
@@ -475,6 +476,16 @@ app.get('/stripe/invoices/:id/lines', (req, res) => {
         errorResponse(res, err);
     });
 });
+
+app.post('/products', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    productService.createProduct(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
 
 sqsApp.on('error', (err) => {
     console.log(err);
