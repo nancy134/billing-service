@@ -455,7 +455,7 @@ exports.getUpcomingLineItems = function(authParams, body){
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
              if (jwt.isAdmin(jwtResult)){
-                stripe.invoices.listLineItems(body).then(function(result){
+                stripe.invoices.listUpcomingLineItems(body).then(function(result){
                     resolve(result);
                 }).catch(function(err){
                     reject(err);
