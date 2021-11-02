@@ -432,21 +432,11 @@ exports.listLineItems = function(authParams, id){
     });
 }
 
-exports.getUpcomingInvoices = function(body){
-    return new Promise(function(resolve, reject){
-        stripe.invoices.retrieveUpcoming(body).then(function(result){
-            resolve(result);
-        }).catch(function(err){
-            reject(err);
-        });
-    });
-}
-
-exports.getUpcomingLineItems = function(authParams, body){
+exports.getUpcomingInvoices = function(authParams, body){
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
              if (jwt.isAdmin(jwtResult)){
-                stripe.invoices.retrieve(body).then(function(result){
+                stripe.invoices.retrieveUpcoming(body).then(function(result){
                     resolve(result);
                 }).catch(function(err){
                     reject(err);
@@ -460,3 +450,23 @@ exports.getUpcomingLineItems = function(authParams, body){
         });
     });
 }
+
+exports.getUpcomingLineItems = function(authParams, body){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+                stripe.invoices.listLineItems(body).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+

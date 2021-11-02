@@ -420,7 +420,7 @@ const sqsApp = Consumer.create({
 
 app.get('/stripe/invoices/upcoming', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    stripeService.getUpcomingInvoices(req.body).then(function(result){
+    stripeService.getUpcomingInvoices(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
@@ -456,7 +456,7 @@ app.post('/stripe/invoices/:id/pay', (req, res) => {
 
 app.get('/stripe/invoices/upcoming/lines', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    stripeService.getUpcomingLineItems(req.body).then(function(result){
+    stripeService.getUpcomingLineItems(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
