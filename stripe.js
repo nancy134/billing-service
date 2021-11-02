@@ -55,15 +55,25 @@ exports.deleteCustomer = function(id){
     });
 }
 
-exports.createProduct = function(params){
+exports.createProduct = function(authParams, params){
     return new Promise(function(resolve, reject){
-        stripe.products.create(params).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+                stripe.products.create(params).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });
     });
 }
+
 
 exports.listProducts = function(authParams, params){
     return new Promise(function(resolve, reject){
@@ -85,15 +95,25 @@ exports.listProducts = function(authParams, params){
     });
 }
 
-exports.createPrice = function(params){
+exports.createPrice = function(authParams, params){
     return new Promise(function(resolve, reject){
-        stripe.prices.create(params).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+                stripe.prices.create(params).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });
     });
 }
+
 
 exports.listPrices = function(authParams, params){
     return new Promise(function(resolve, reject){
@@ -115,10 +135,18 @@ exports.listPrices = function(authParams, params){
     });
 }
 
-exports.createInvoice = function(params){
+exports.createInvoice = function(authParams, params){
     return new Promise(function(resolve, reject){
-        stripe.invoices.create(params).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+                stripe.invoice.create(params).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
         }).catch(function(err){
             reject(err);
         });
@@ -145,10 +173,19 @@ exports.listInvoices = function(authParams, params){
     });
 }
 
-exports.createInvoiceItem = function(params){
+exports.createInvoiceItem = function(authParams, params){
     return new Promise(function(resolve, reject){
-        stripe.invoiceItems.create(params).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+                stripe.invoiceItems.create(params).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+               
         }).catch(function(err){
             reject(err);
         });
