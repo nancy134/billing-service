@@ -293,12 +293,13 @@ app.get('/stripe/customers', (req, res) => {
 
 app.post('/stripe/products', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    stripeService.createProduct(req.body).then(function(result){
+    stripeService.createProduct(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
     });
 });
+
 
 //app.get('/stripe/products', (req, res) => {
 //    var authParams = jwt.getAuthParams(req);
@@ -321,12 +322,13 @@ app.get('/stripe/products', (req, res) => {
 
 app.post('/stripe/prices', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    stripeService.createPrice(req.body).then(function(result){
+    stripeService.createPrice(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
     });
 });
+
 
 app.get('/stripe/prices', (req, res) => {
     var authParams = jwt.getAuthParams(req);
@@ -340,7 +342,7 @@ app.get('/stripe/prices', (req, res) => {
 
 app.post('/stripe/invoices', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    stripeService.createInvoice(req.body).then(function(result){
+    stripeService.createInvoice(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
@@ -358,12 +360,13 @@ app.get('/stripe/invoices', (req, res) => {
 
 app.post('/stripe/invoiceItems', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    stripeService.createInvoiceItem(req.body).then(function(result){
+    stripeService.createInvoiceItem(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
     });
 });
+
 
 app.get('/stripe/invoiceItems', (req, res) => {
     var authParams = jwt.getAuthParams(req);
