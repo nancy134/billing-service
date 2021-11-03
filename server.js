@@ -501,12 +501,33 @@ app.get('/products', (req, res) => {
     });
 });
 
+app.post('/products/import', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    productService.importProducts(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
+app.delete('/products/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    productService.deleteProduct(authParams, req.params.id).then(function(result){
+        res.send("ok");
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
 
 sqsApp.on('error', (err) => {
     console.log(err);
 });
+
 sqsApp.on('processing_error', (err) => {
     console.log(err);
 });
+
 sqsApp.start();
 app.listen(PORT, HOST);

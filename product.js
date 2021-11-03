@@ -49,3 +49,45 @@ exports.getProducts = function(authParams, pageParams, where){
         });
    });
 }
+
+   exports.importProducts = function(authParams, body){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                if (body.products.length){
+                    for (var i=0; i<body.products.length; i++){
+                        console.log(body.products[i]);
+                    }
+                } else {
+                    resolve("no products");
+                }
+            } else {
+                reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+   });
+}
+
+
+exports.deleteProduct = function(authParams, id){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.Product.destroy({
+                    where: {id: id,}
+                }).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
