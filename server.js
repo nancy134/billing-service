@@ -490,7 +490,7 @@ app.get('/products', (req, res) => {
     var authParams = jwt.getAuthParams(req);
     var pageParams = utilities.getPageParams(req);
     var where = null;
-    productService.getProducts(authParams).then(function(result){
+    productService.getProducts(authParams, pageParams, where).then(function(result){
         res.send(result);
 
 
