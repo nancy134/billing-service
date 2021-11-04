@@ -4,6 +4,8 @@ module.exports = (sequelize, DataTypes) => {
         daysInMonth: DataTypes.INTEGER,
         dayOnMarket: DataTypes.INTEGER,
         price: DataTypes.INTEGER,
+        stripeProduct: DataTypes.STRING,
+        stripePrice: DataTypes.STRING,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     }, {});
