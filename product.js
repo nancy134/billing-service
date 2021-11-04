@@ -169,3 +169,18 @@ exports.getProduct = function(authParams, id){
     });
 }
 
+exports.syncProducts = function(authParams, body){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+             if (jwt.isAdmin(jwtResult)){
+                 resolve("sync products");
+             } else {
+                reject(utilities.notAuthorized());
+            }
+
+        }).catch(function(err){
+            reject(err);
+        });
+   });
+}
+

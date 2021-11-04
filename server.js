@@ -520,6 +520,14 @@ app.delete('/products/all', (req, res) => {
     });
 });
 
+app.post('/products/sync', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    productService.syncProducts(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
 
 app.delete('/products/:id', (req, res) => {
     var authParams = jwt.getAuthParams(req);
