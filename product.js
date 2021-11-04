@@ -102,3 +102,69 @@ exports.deleteProduct = function(authParams, id){
     });
 }
 
+exports.updateProduct = function(authParams, id, body, t){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.Product.update(
+                    body,
+                    {
+                        returning: true,
+                        where: {id: id},
+                        transaction: t
+                    }
+                ).then(function([rowsUpdate, [product]]){
+                    resolve(product);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+exports.getProduct = function(authParams, id){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.Product.findOne({
+                    where: {id: id}
+                }).then(function(product){
+                    resolve(product);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                ret = utilities.notAuthorized();
+                reject(ret);
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+exports.deleteAllProducts = function(authParams){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.Product.destroy({
+                    where: {},
+                    truncate: true
+                }).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
