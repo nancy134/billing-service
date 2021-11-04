@@ -511,6 +511,16 @@ app.post('/products/import', (req, res) => {
 });
 
 
+app.delete('/products/all', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    productService.deleteAllProducts(authParams).then(function(result){
+        res.send("OK");
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
 app.delete('/products/:id', (req, res) => {
     var authParams = jwt.getAuthParams(req);
     productService.deleteProduct(authParams, req.params.id).then(function(result){
@@ -523,16 +533,6 @@ app.delete('/products/:id', (req, res) => {
 app.put('/products/:id', (req, res) => {
     var authParams = jwt.getAuthParams(req);
     productService.updateProduct(authParams, req.params.id, req.body).then(function(result){
-        res.send(result);
-    }).catch(function(err){
-        errorResponse(res, err);
-    });
-});
-
-
-app.delete('/products/all', (req, res) => {
-    var authParams = jwt.getAuthParams(req);
-    productService.deleteAllProducts(authParams).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);

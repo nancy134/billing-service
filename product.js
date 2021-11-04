@@ -102,6 +102,27 @@ exports.deleteProduct = function(authParams, id){
     });
 }
 
+exports.deleteAllProducts = function(authParams){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.Product.destroy({
+                    where: {},
+                    truncate: true
+                }).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
 exports.updateProduct = function(authParams, id, body, t){
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
@@ -148,23 +169,3 @@ exports.getProduct = function(authParams, id){
     });
 }
 
-exports.deleteAllProducts = function(authParams){
-    return new Promise(function(resolve, reject){
-        jwt.verifyToken(authParams).then(function(jwtResult){
-            if (jwt.isAdmin(jwtResult)){
-                models.Product.destroy({
-                    where: {},
-                    truncate: true
-                }).then(function(result){
-                    resolve(result);
-                }).catch(function(err){
-                    reject(err);
-                });
-            } else {
-                reject(utilities.notAuthorized());
-            }
-        }).catch(function(err){
-            reject(err);
-        });
-    });
-}
