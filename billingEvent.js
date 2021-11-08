@@ -96,3 +96,72 @@ exports.deleteBillingEvents = function(authParams, id){
     });
 }
 
+
+exports.getAllBillingEvents = function(authParams, pageParams, where){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.BillingEvent.findAndCountAll({
+                    where: where,
+                    limit: pageParams.limit,
+                    offset: pageParams.offset
+                }).then(function(result){
+                    var ret = {
+                        page: pageParams.page,
+                        perPage: pageParams.limit,
+                        billingEvents: result
+                    };
+                    resolve(ret);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                 ret = utilities.notAuthorized();
+                 reject(ret);
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    })
+}
+
+exports.createAuthenticated = function(authParams, body){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.BillingEvent.create(body).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                 ret = utilities.notAuthorized();
+                 reject(ret);
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+exports.getBillingEvent = function(authParams, id){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.BillingEvent.findOne({
+                    where: {id: id},
+                    attributes: ['id', 'start', 'end']
+                }).then(function(billingEvent){
+                    resolve(billingEvent);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                ret = utilities.notAuthorized();
+                reject(ret);
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}

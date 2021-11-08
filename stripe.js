@@ -3,6 +3,7 @@ const jwt = require('./jwt');
 
 const stripe = require('stripe')(process.env.STRIPE_SK);
 const utilities = require("./utilities");
+const productService = require("./product");
 
 
 exports.createCustomer = function(params){
@@ -525,3 +526,49 @@ exports.getUpcomingLineItems = function(authParams, body){
     });
 }
 
+
+// params = { id: 1, daysInMonth: 28, dayOnMarket: 2, price: 86}
+// productParams = { name: "28 day month, 2 days on market"}
+// pridceParams = { product: productId, unit_amount: 86, currency: "usd"}
+exports.syncProduct = function(authParams, params){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                var productName =
+                    params.daysInMonth +
+                    " day month, " +
+                    params.dayOnMarket +
+                    " day(s) on market";
+                var productParams = {
+                    name: productName
+                };
+                console.log("productParams:");
+                console.log(productParams);
+                exports.createProduct(authParams, productParams).then(function(product){
+                    var priceParams = {
+                        product: product.id,
+                        unit_amount: params.price,
+                        currency: "usd"
+                    };
+                    console.log("priceParams:");
+                    console.log(priceParams);
+                    exports.createPrice(authParams, priceParams).then(function(price){
+                        productService.u
+                        resolve(price);
+                    }).catch(function(err){
+                        console.log(err);
+                        reject(err);
+                    });
+                }).catch(function(err){
+                    console.log(err);
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            console.log(err);
+            reject(err);
+        });
+    });
+}

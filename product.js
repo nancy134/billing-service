@@ -1,7 +1,7 @@
 const models = require("./models");
 const jwt = require("./jwt");
 const utilities = require("./utilities");
-
+const stripeService = require("./stripe");
 
 
 exports.createProduct = function(authParams, body){
@@ -169,18 +169,55 @@ exports.getProduct = function(authParams, id){
     });
 }
 
+//exports.syncProducts = function(authParams, body){
+//   return new Promise(function(resolve, reject){
+//        jwt.verifyToken(authParams).then(function(jwtResult){
+//             if (jwt.isAdmin(jwtResult)){
+//                 resolve("sync products");
+//             } else {
+//                reject(utilities.notAuthorized());
+//            }
+//
+//        }).catch(function(err){
+//            reject(err);
+//        });
+//   });
+//}
+
+
+// params = { id: 1, daysInMonth: 28, dayOnMarket: 2, price: 86}
+// productParams = { name: "28 day month, 2 days on market"}
+// pridceParams = { product: productId, unit_amount: 86, currency: "usd"}
 exports.syncProducts = function(authParams, body){
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
-             if (jwt.isAdmin(jwtResult)){
-                 resolve("sync products");
-             } else {
-                reject(utilities.notAuthorized());
+            if (jwt.isAdmin(jwtResult)){
+                models.Product.findAndCountAll({}).then(function(result){
+                    if (result.rows.length > 0){
+                        var syncProductPromises = [];
+                        for (var i=0; i<result.rows.length; i++){
+                            var syncProduct = stripeService.syncProduct(authParams,result.rows[i]);
+                            syncProductPromises.push(syncProduct);
+                        }
+                        Promise.all(syncProductPromises).then(function(result){
+                            resolve(result);
+                        }).catch(function(err){
+                            console.log(err);
+                            reject(err);
+                        });
+                    } else {
+                        resolve("no products");
+                    }
+                }).catch(function(err){
+                     console.log(err);
+                     reject(err);
+                });
+            } else {
+               reject(utilities.notAuthorized());
             }
-
         }).catch(function(err){
+            console.log(err);
             reject(err);
         });
    });
 }
-

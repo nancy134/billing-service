@@ -2,20 +2,25 @@ var jwksClient = require('jwks-rsa');
 var jwt = require('jsonwebtoken');
 
 exports.getAuthParams = function(req){
-    var authParms = {};
+    var authParams = {};
     var authorization = req.get("Authorization");
+
+    if (!authorization){
+        return null;
+    }
+
     var array = authorization.split(" ");
     var IdToken = array[1];
 
     var cognitoClientId = req.get("com-sabresw-cognito-client-id");
     var cognitoPoolId =  req.get("com-sabresw-cognito-pool-id");
-    var jwksUri = 
+    var jwksUri =
         "https://cognito-idp." +
         process.env.AWS_REGION +
         ".amazonaws.com/" +
         cognitoPoolId +
         "/.well-known/jwks.json";
-    var issuer = 
+    var issuer =
         "https://cognito-idp." +
         process.env.AWS_REGION +
         ".amazonaws.com/" +
@@ -46,6 +51,14 @@ exports.isAdmin = function(jwtResult){
 
 exports.verifyToken = function(authParams){
     return new Promise(function(resolve, reject){
+
+        if (!authParams){
+            var err = {
+                message: "No authorization header"
+            };
+            reject(err);
+            return;
+        }
         var client = jwksClient({
             jwksUri: authParams.jwksUri
         });

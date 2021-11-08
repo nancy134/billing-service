@@ -67,7 +67,7 @@ app.get('/paymentMethod', (req, res) => {
 });
 
 app.post('/billingCycles', (req, res) => {
-    var authParms = jwt.getAuthParams(req);
+    var authParams = jwt.getAuthParams(req);
     billingCycleService.create(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -557,6 +557,46 @@ app.get('/products/:id', (req, res) => {
     });
 });
 
+app.get('/billingEvents', (req, res) => {
+    var pageParams = utilities.getPageParams(req);
+    var where = null;
+    var authParams = jwt.getAuthParams(req);
+    billingEventService.getAllBillingEvents(authParams, pageParams, where).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        console.log(err);
+        errorResponse(res, err);
+    });
+});
+
+//app.post('/billingEvents', (req, res) => {
+//    var authParams = jwt.getAuthParams(req);
+//    billingEventService.create(authParams, req.body).then(function(result){
+//        res.send(result);
+//    }).catch(function(err){
+//        errorResponse(res, err);
+//    });
+//});
+
+
+app.post('/billingEvents', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    billingEventService.createAuthenticated(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/billingEvents/:id', (req, res) => {
+    var id = req.params.id;
+    var authParams = jwt.getAuthParams(req);
+    billingEventService.getBillingEvent(authParams, id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
 
 
 sqsApp.on('error', (err) => {
