@@ -2,7 +2,7 @@ const models = require("./models");
 const jwt = require("./jwt");
 const utilities = require("./utilities");
 const stripeService = require("./stripe");
-
+const PromiseThrottle = require("promise-throttle");
 
 exports.createProduct = function(authParams, body){
     return new Promise(function(resolve, reject){
@@ -189,14 +189,21 @@ exports.getProduct = function(authParams, id){
 // productParams = { name: "28 day month, 2 days on market"}
 // pridceParams = { product: productId, unit_amount: 86, currency: "usd"}
 exports.syncProducts = function(authParams, body){
+    
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
             if (jwt.isAdmin(jwtResult)){
                 models.Product.findAndCountAll({}).then(function(result){
                     if (result.rows.length > 0){
-                        var syncProductPromises = [];
+                    
+                        var promiseThrottle = new PromiseThrottle({
+                            requestsPerSecond: 20,
+                            //promiseImplementation: Promise
+                        });
+                        var syncProductPromises = [];                    
                         for (var i=0; i<result.rows.length; i++){
-                            var syncProduct = stripeService.syncProduct(authParams,result.rows[i]);
+                            //var syncProduct = promiseThrottle.add(stripeService.syncProduct(authParams,result.rows[i]));
+                            var syncProduct = promiseThrottle.add(stripeService.syncProduct.bind(this, authParams,result.rows[i]));
                             syncProductPromises.push(syncProduct);
                         }
                         Promise.all(syncProductPromises).then(function(result){
