@@ -27,3 +27,17 @@ exports.makeid = function(length) {
    }
    return result.join('');
 }
+
+exports.getDaysOnMarket = function(start, end){
+    var time = end - start;
+    var days = time / (1000 * 3600 * 24);
+    return Math.floor(days);
+}
+
+exports.getDaysInMonth = function(end){
+    var date = new Date(end);
+    
+    var month = date.getMonth();
+    var year = date.getYear();
+    return new Date(year, month, 0).getDate();
+}

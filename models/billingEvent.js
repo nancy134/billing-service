@@ -7,18 +7,19 @@ module.exports = (sequelize, DataTypes) => {
         owner: DataTypes.STRING,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
+        ProductId: DataTypes.INTEGER,
         daysOnMarket: {
             type: DataTypes.VIRTUAL,
             get(){
-                
+
                 var time = this.end - this.start;
                 var days = time / (1000 * 3600 * 24);
                 return days.toFixed(2);
-            } 
+            }
         },
         cost: {
             type: DataTypes.VIRTUAL,
-            get() { 
+            get() {
                 var time = this.end - this.start;
                 var days = time / (1000 * 3600 * 24);
                 var cost = days * 0.82;
@@ -30,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
 
     BillingEvent.associate = function(models){
         BillingEvent.belongsTo(models.BillingCycle);
+        BillingEvent.belongsTo(models.Product);
     };
 
     return BillingEvent;

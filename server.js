@@ -599,6 +599,16 @@ app.get('/billingEvents/:id', (req, res) => {
 });
 
 
+app.delete('/billingEvents/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    billingEventService.deleteBillingEvent(authParams, req.params.id).then(function(result){
+        res.send("ok");
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
 sqsApp.on('error', (err) => {
     console.log(err);
 });

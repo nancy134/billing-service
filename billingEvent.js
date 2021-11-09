@@ -150,7 +150,7 @@ exports.getBillingEvent = function(authParams, id){
             if (jwt.isAdmin(jwtResult)){
                 models.BillingEvent.findOne({
                     where: {id: id},
-                    attributes: ['id', 'start', 'end']
+                    //attributes: ['id', 'start', 'end']
                 }).then(function(billingEvent){
                     resolve(billingEvent);
                 }).catch(function(err){
@@ -165,3 +165,27 @@ exports.getBillingEvent = function(authParams, id){
         });
     });
 }
+
+exports.deleteBillingEvent = function(authParams, id, t){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.BillingEvent.destroy({
+                    where: {
+                        id: id,
+                    },
+                    transaction: t
+                }).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
