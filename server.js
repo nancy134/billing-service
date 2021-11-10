@@ -608,6 +608,47 @@ app.delete('/billingEvents/:id', (req, res) => {
     });
 });
 
+app.post('/billingEvents/sqs', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    var pageParams = utilities.getPageParams(req);
+    
+    var daysOnMarket = utilities.getDaysOnMarket(req.body.start, req.body.end);
+    var daysInMonth = utilities.getDaysInMonth(req.body.end);
+    var where = {
+        dayOnMarket: daysOnMarket,
+        daysInMonth: daysInMonth
+    };
+    productService.getProducts(authParams, pageParams, where).then(function(products){
+        var body = {
+            BillingCycleId: req.body.BillingCycleId,
+            start: req.body.start,
+            end: req.body.end,
+            ListingId: req.body.ListingId,
+            owner: req.body.owner,
+            ProductId: products.products.rows[0].id
+        }
+        billingEventService.create(body).then(function(billingEvent){
+            res.send(billingEvent);
+        }).catch(function(err){
+            errorResponse(res, err);
+        });
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
+app.post('/billingEvents/:id/invoice', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    billingEventService.invoice(authParams, req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
+
 
 sqsApp.on('error', (err) => {
     console.log(err);

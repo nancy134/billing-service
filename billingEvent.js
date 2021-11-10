@@ -189,3 +189,21 @@ exports.deleteBillingEvent = function(authParams, id, t){
     });
 }
 
+exports.invoice = function(authParams, id){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                exports.getBillingEvent(authParams, id).then(function(billingEvent){
+                    resolve(billingEvent);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                ret = utilities.notAuthorized();
+                reject(ret);
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}

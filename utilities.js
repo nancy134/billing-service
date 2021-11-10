@@ -29,10 +29,12 @@ exports.makeid = function(length) {
 }
 
 exports.getDaysOnMarket = function(start, end){
-    var time = end - start;
-    var days = time / (1000 * 3600 * 24);
-    return Math.floor(days);
+    var iStart = new Date(start);
+    var iEnd = new Date(end);
+    var days = iEnd.getDate() - iStart.getDate();
+    return days;
 }
+
 
 exports.getDaysInMonth = function(end){
     var date = new Date(end);
@@ -41,3 +43,4 @@ exports.getDaysInMonth = function(end){
     var year = date.getYear();
     return new Date(year, month, 0).getDate();
 }
+

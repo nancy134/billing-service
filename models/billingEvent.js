@@ -36,3 +36,21 @@ module.exports = (sequelize, DataTypes) => {
 
     return BillingEvent;
 }
+
+
+
+
+exports.invoice = function(authParams, id){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                resolve("to be invoiced"+id);
+            } else {
+                ret = utilities.notAuthorized();
+                reject(ret);
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
