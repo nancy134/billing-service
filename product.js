@@ -184,7 +184,7 @@ exports.syncProducts = function(authParams, body){
                             requestsPerSecond: 10 
                         });
                         var syncProductPromises = [];                    
-                        for (var i=0; i<result.rows.length; i++){
+                        for (var i=0; i<2; i++){
                             var syncProduct = promiseThrottle.add(stripeService.syncProduct.bind(this, authParams,result.rows[i]));
                             syncProductPromises.push(syncProduct);
                         }

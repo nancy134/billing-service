@@ -535,6 +535,7 @@ exports.syncProduct = function(authParams, params){
         jwt.verifyToken(authParams).then(function(jwtResult){
             if (jwt.isAdmin(jwtResult)){
                 var productName =
+                    "murban " +
                     params.daysInMonth +
                     " day month, " +
                     params.dayOnMarket +
@@ -549,7 +550,6 @@ exports.syncProduct = function(authParams, params){
                         currency: "usd"
                     };
                     exports.createPrice(authParams, priceParams).then(function(price){
-                        productService.u
                         resolve(price);
                     }).catch(function(err){
                         console.log(err);
