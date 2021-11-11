@@ -16,18 +16,11 @@ exports.createCustomer = function(params){
     });
 }
 
-//exports.listCustomers = function(params){
-//    return new Promise(function(resolve, reject){
-//        stripe.customers.list(params).then(function(result){
-//           resolve(result);
-//        }).catch(function(err){
-//            reject(err);
-//        });
-//    });
-//}
 
-exports.listCustomers = function(params){
-    return new Promise(function(resolve, reject){
+
+//exports.listCustomers = function(params){
+exports.listCustomers = function(authParams, params){
+        return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
              if (jwt.isAdmin(jwtResult)){
 
@@ -550,7 +543,15 @@ exports.syncProduct = function(authParams, params){
                         currency: "usd"
                     };
                     exports.createPrice(authParams, priceParams).then(function(price){
-                        resolve(price);
+                        var productBody = {
+                            stripeProduct: product.id,
+                            stripePrice: price.id
+                        }
+                        productService.updateProduct(authParams, params.id, productBody).then(function(result){
+                            resolve(result);
+                        }).catch(function(err){
+                            reject(err);
+                        });
                     }).catch(function(err){
                         console.log(err);
                         reject(err);

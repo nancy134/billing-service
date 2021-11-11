@@ -523,7 +523,7 @@ app.delete('/products/all', (req, res) => {
 app.post('/products/sync', (req, res) => {
     var authParams = jwt.getAuthParams(req);
     productService.syncProducts(authParams, req.body).then(function(result){
-        res.send(result);
+    res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
     });
@@ -568,6 +568,18 @@ app.get('/billingEvents', (req, res) => {
         errorResponse(res, err);
     });
 });
+
+
+app.post('/products/:id/sync', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    //productService.syncProduct(authParams, id).then(function(result){
+    productService.syncProduct(authParams, req.params.id).then(function(result){
+    res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
 
 //app.post('/billingEvents', (req, res) => {
 //    var authParams = jwt.getAuthParams(req);
@@ -643,6 +655,7 @@ app.post('/billingEvents/:id/invoice', (req, res) => {
     billingEventService.invoice(authParams, req.params.id).then(function(result){
         res.send(result);
     }).catch(function(err){
+        console.log(err);
         errorResponse(res, err);
     });
 });

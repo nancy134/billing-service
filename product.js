@@ -210,3 +210,30 @@ exports.syncProducts = function(authParams, body){
         });
    });
 }
+
+
+
+exports.syncProduct = function(authParams, id){
+
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                models.Product.findOne({where:{id: id}}).then(function(product){
+                    stripeService.syncProduct(authParams, product).then(function(result){
+                        resolve(result);
+                    }).catch(function(err){
+                        reject(err);
+                    });
+                }).catch(function(err){
+                    console.log(err);
+                    reject(err);
+                });
+            } else {
+               reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            console.log(err);
+            reject(err);
+        });
+   });
+}

@@ -1,6 +1,8 @@
 const models = require("./models");
 const jwt = require("./jwt");
 const utilities = require("./utilities");
+const userService = require('./user');
+const stripeService = require('./stripe');
 
 exports.create = function(body){
     return new Promise(function(resolve, reject){
@@ -150,10 +152,37 @@ exports.getBillingEvent = function(authParams, id){
             if (jwt.isAdmin(jwtResult)){
                 models.BillingEvent.findOne({
                     where: {id: id},
-                    //attributes: ['id', 'start', 'end']
+                    include: [
+                        {
+                            model: models.Product
+                        }
+                    ]
                 }).then(function(billingEvent){
-                    resolve(billingEvent);
+                    userService.findByCognitoId(jwtResult['cognito:username']).then(function(user){
+                        var params = {
+                            email: user.email
+                        };
+                        stripeService.listCustomers(authParams, params).then(function(customer){
+                            itemParams = {
+                                customer: customer.data[0].id,
+                                price: billingEvent.Product.stripePrice
+                            };
+                            stripeService.createInvoiceItem(authParams, itemParams).then(function(invoiceItem){
+                                resolve(invoiceItem);
+                            }).catch(function(err){
+                                console.log(err);
+                                reject(err);
+                            });
+                        }).catch(function(err){
+                            console.log(err);
+                            reject(err);
+                        });
+                    }).catch(function(err){
+                        console.log(err);
+                        reject(err);
+                    });
                 }).catch(function(err){
+                    console.log(err);
                     reject(err);
                 });
             } else {
@@ -161,10 +190,14 @@ exports.getBillingEvent = function(authParams, id){
                 reject(ret);
             }
         }).catch(function(err){
+            console.log(err);
             reject(err);
         });
     });
 }
+
+
+
 
 exports.deleteBillingEvent = function(authParams, id, t){
     return new Promise(function(resolve, reject){
