@@ -542,16 +542,12 @@ exports.syncProduct = function(authParams, params){
                 var productParams = {
                     name: productName
                 };
-                console.log("productParams:");
-                console.log(productParams);
                 exports.createProduct(authParams, productParams).then(function(product){
                     var priceParams = {
                         product: product.id,
                         unit_amount: params.price,
                         currency: "usd"
                     };
-                    console.log("priceParams:");
-                    console.log(priceParams);
                     exports.createPrice(authParams, priceParams).then(function(price){
                         productService.u
                         resolve(price);
