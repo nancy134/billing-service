@@ -39,14 +39,22 @@ exports.listCustomers = function(authParams, params){
     });
 }
 
-exports.deleteCustomer = function(id){
+exports.deleteCustomer = function(authParams, id){
     return new Promise(function(resolve, reject){
-        stripe.customers.del(id).then(function(result){
-            resolve(result);
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                stripe.customers.del(id).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+             } else {
+                reject(utilities.notAuthorized());
+            }
         }).catch(function(err){
             reject(err);
         });
-    });
+   });
 }
 
 exports.createProduct = function(authParams, params){
@@ -590,3 +598,124 @@ exports.getCustomer = function(authParams, id){
     });
 });
 }
+
+exports.updateCustomer = function(authParams, id, body){
+    return new Promise(function(resolve, reject){
+    jwt.verifyToken(authParams).then(function(jwtResult){
+         if (jwt.isAdmin(jwtResult)){
+
+            stripe.customers.update(id, body).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                reject(err);
+            });
+        } else {
+            reject(utilities.notAuthorized());
+        }
+
+    }).catch(function(err){
+        reject(err);
+    });
+});
+}
+
+exports.getProduct = function(authParams, id){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+
+                stripe.products.retrieve(id).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+
+exports.updateProduct = function(authParams, id, body){
+    return new Promise(function(resolve, reject){
+    jwt.verifyToken(authParams).then(function(jwtResult){
+         if (jwt.isAdmin(jwtResult)){
+
+            stripe.products.update(id, body).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                reject(err);
+            });
+        } else {
+            reject(utilities.notAuthorized());
+        }
+
+    }).catch(function(err){
+        reject(err);
+    });
+});
+}
+
+exports.deleteProduct = function(authParams, id){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+                stripe.products.del(id).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+             } else {
+                reject(utilities.notAuthorized());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+   });
+}
+
+
+exports.getPrice = function(authParams, id){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+
+                stripe.prices.retrieve(id).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+exports.updatePrice = function(authParams, id, body){
+    return new Promise(function(resolve, reject){
+    jwt.verifyToken(authParams).then(function(jwtResult){
+         if (jwt.isAdmin(jwtResult)){
+
+            stripe.prices.update(id, body).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                reject(err);
+            });
+        } else {
+            reject(utilities.notAuthorized());
+        }
+
+    }).catch(function(err){
+        reject(err);
+    });
+});
+}
+

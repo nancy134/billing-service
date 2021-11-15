@@ -672,6 +672,74 @@ app.get('/stripe/customers/:id', (req, res) => {
 });
 
 
+app.delete('/stripe/customers/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.deleteCustomer(authParams, req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
+app.put('/stripe/customers/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.updateCustomer(authParams, req.params.id, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
+app.get('/stripe/products/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.getProduct(authParams, req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
+app.put('/stripe/products/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.updateProduct(authParams, req.params.id, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
+app.delete('/stripe/products/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.deleteProduct(authParams, req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/stripe/prices/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.getPrice(authParams, req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.put('/stripe/prices/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.updatePrice(authParams, req.params.id, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
 sqsApp.on('error', (err) => {
     console.log(err);
 });
