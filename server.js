@@ -285,7 +285,7 @@ app.post('/stripe/customers', (req, res) => {
 
 app.get('/stripe/customers', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    stripeService.listCustomers(req.body).then(function(result){
+    stripeService.listCustomers(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);
@@ -661,6 +661,15 @@ app.post('/billingEvents/:id/invoice', (req, res) => {
 });
 
 
+app.get('/stripe/customers/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.getCustomer(authParams, req.params.id).then(function(result){
+    //stripeService.getCustomer(req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
 
 
 sqsApp.on('error', (err) => {

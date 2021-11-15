@@ -569,3 +569,24 @@ exports.syncProduct = function(authParams, params){
         });
     });
 }
+
+
+exports.getCustomer = function(authParams, id){
+    return new Promise(function(resolve, reject){
+    jwt.verifyToken(authParams).then(function(jwtResult){
+         if (jwt.isAdmin(jwtResult)){
+
+            stripe.customers.retrieve(id).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                reject(err);
+            });
+        } else {
+            reject(utilities.notAuthorized());
+        }
+
+    }).catch(function(err){
+        reject(err);
+    });
+});
+}
