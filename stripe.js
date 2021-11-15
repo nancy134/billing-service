@@ -719,3 +719,44 @@ exports.updatePrice = function(authParams, id, body){
 });
 }
 
+
+exports.getInvoiceItem = function(authParams, id){
+    return new Promise(function(resolve, reject){
+        jwt.verifyToken(authParams).then(function(jwtResult){
+            if (jwt.isAdmin(jwtResult)){
+
+                stripe.invoiceItems.retrieve(id).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                reject(utilities.notAuthorized());
+            }
+
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
+
+exports.updateInvoiceItem = function(authParams, id, body){
+    return new Promise(function(resolve, reject){
+    jwt.verifyToken(authParams).then(function(jwtResult){
+         if (jwt.isAdmin(jwtResult)){
+
+            stripe.invoiceItems.update(id, body).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                reject(err);
+            });
+        } else {
+            reject(utilities.notAuthorized());
+        }
+
+    }).catch(function(err){
+        reject(err);
+    });
+});
+}

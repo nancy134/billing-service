@@ -739,6 +739,25 @@ app.put('/stripe/prices/:id', (req, res) => {
     });
 });
 
+app.get('/stripe/invoiceItems/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.getInvoiceItem(authParams, req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
+app.put('/stripe/invoiceItems/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.updateInvoiceItem(authParams, req.params.id, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
 
 sqsApp.on('error', (err) => {
     console.log(err);
