@@ -760,3 +760,68 @@ exports.updateInvoiceItem = function(authParams, id, body){
     });
 });
 }
+
+
+exports.getPaymentMethods = function(authParams, body){
+    return new Promise(function(resolve, reject){
+    jwt.verifyToken(authParams).then(function(jwtResult){
+         if (jwt.isAdmin(jwtResult)){
+
+            stripe.paymentMethods.list(body).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                reject(err);
+            });
+        } else {
+            reject(utilities.notAuthorized());
+        }
+
+    }).catch(function(err){
+        reject(err);
+    });
+});
+}
+
+
+exports.getPaymentMethod = function(authParams, id){
+    return new Promise(function(resolve, reject){
+    jwt.verifyToken(authParams).then(function(jwtResult){
+         if (jwt.isAdmin(jwtResult)){
+
+            stripe.paymentMethods.retrieve(id).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                reject(err);
+            });
+        } else {
+            reject(utilities.notAuthorized());
+        }
+
+    }).catch(function(err){
+        reject(err);
+    });
+});
+}
+
+exports.getCustomerPaymentMethods = function(authParams, id, body){
+    return new Promise(function(resolve, reject){
+    jwt.verifyToken(authParams).then(function(jwtResult){
+         if (jwt.isAdmin(jwtResult)){
+
+
+            //stripe.customers.listSources(id, body).then(function(result){
+            stripe.customers.listPaymentMethods(id, body).then(function(result){
+                resolve(result);
+            }).catch(function(err){
+                reject(err);
+            });
+        } else {
+            reject(utilities.notAuthorized());
+        }
+
+    }).catch(function(err){
+        reject(err);
+    });
+});
+}
+

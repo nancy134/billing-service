@@ -759,6 +759,36 @@ app.put('/stripe/invoiceItems/:id', (req, res) => {
 });
 
 
+app.get('/stripe/payment_methods', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.getPaymentMethods(authParams, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+app.get('/stripe/payment_methods/:id', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.getPaymentMethod(authParams, req.params.id).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        errorResponse(res, err);
+    });
+});
+
+
+app.get('/stripe/customers/:id/payment_methods', (req, res) => {
+    var authParams = jwt.getAuthParams(req);
+    stripeService.getCustomerPaymentMethods(authParams, req.params.id, req.body).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        console.log(err)
+        errorResponse(res, err);
+    });
+});
+
+
 sqsApp.on('error', (err) => {
     console.log(err);
 });
