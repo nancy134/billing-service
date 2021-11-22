@@ -22,7 +22,7 @@ exports.create = function(authParams, body, t){
     });
 }
 
-exports.findByCode = function(codeId){
+exports.findByCode = function(authParams, codeId){
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
             models.UserCode.findOne({
@@ -40,7 +40,7 @@ exports.findByCode = function(codeId){
     });
 }
 
-exports.findUserCodeMe = function(userId){
+exports.findUserCodeMe = function(authParams){
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
             var cognitoId = jwtResult["cognito:username"];
@@ -97,16 +97,28 @@ exports.validate = function(authParams, body){
         jwt.verifyToken(authParams).then(function(jwtResult){
             var cognitoId = jwtResult["cognito:username"];
             userService.findByCognitoId(cognitoId).then(function(user){
-                codeService.findByPromoCode(body.code).then(function(code){
+                codeService.findByPromoCode(authParams, body.code).then(function(code){
+                    console.log("code:");
+                    console.log(code);
                     if (code !== null){
-                        exports.findByCode(code.id).then(function(userCode){
-                            if (!userCode){
+
+                        // If promotion is multi-use, then create
+                        // If promotion is single-use, then only create if not already in use:w
+
+                        exports.findByCode(authParams, code.id).then(function(userCode){
+                            console.log("userCode:");
+                            console.log(userCode);
+                            if (!userCode || (userCode && code.multiUse === true)){
                                 var body = {
                                     UserId: user.id,
                                     CodeId: code.id
                                 };
+                                console.log("body:");
+                                console.log(body);
                                 exports.create(authParams, body).then(function(userCode){
-                                    exports.findUserCodeMe().then(function(userCodeFull){
+                                    exports.findUserCodeMe(authParams).then(function(userCodeFull){
+                                        console.log("userCodeFull:");
+                                        console.log(userCodeFull);
                                         resolve(userCodeFull);
                                     }).catch(function(err){
                                         reject(err);

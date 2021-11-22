@@ -6,8 +6,13 @@ exports.create = function(authParams, body, t){
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
             if (jwt.isAdmin(jwtResult)){
-                var code = utilities.makeid(6);
+                var code = body.code;
+                if (body.autoGenerate){
+                    code = utilities.makeid(6);
+                }
+                delete body["autoGenerate"];
                 body.code = code;
+                console.log(body);
                 models.Code.findOrCreate({
                     where: body,
                     transaction: t
@@ -144,14 +149,13 @@ exports.deleteCode = function(authParams, id, t){
     });
 }
 
-exports.findByPromoCode = function(code){
+exports.findByPromoCode = function(authParams, code){
     return new Promise(function(resolve, reject){
         jwt.verifyToken(authParams).then(function(jwtResult){
             models.Code.findOne({
                 where: {
                     code: code
-                },
-                attributes: ['id', 'code']
+                }
             }).then(function(code){
                 resolve(code);
             }).catch(function(err){

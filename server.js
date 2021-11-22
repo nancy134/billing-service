@@ -189,9 +189,12 @@ app.post('/promotions/:id/codes', (req, res) => {
     var authParams = jwt.getAuthParams(req);
     var id = req.params.id;
     req.body.PromotionId = id;
+    console.log(req.body);
     codeService.create(authParams, req.body).then(function(result){
+        console.log(result);
         res.send(result);
     }).catch(function(err){
+        console.log(err);
         errorResponse(res, err);
     });
 });
@@ -261,15 +264,18 @@ app.post('/codes/validate', (req, res) => {
     userCodeService.validate(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
+        console.log(err);
         errorResponse(res, err);
     });
 });
 
 app.get('/users/codes/me', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    userCodeService.findUserCodeMe(authParams, req.body).then(function(result){
+    userCodeService.findUserCodeMe(authParams).then(function(result){
+        console.log(result);
         res.send(result);
     }).catch(function(err){
+        console.log(err);
         errorResponse(res, err);
     });
 });
