@@ -421,8 +421,22 @@ const sqsApp = Consumer.create({
             cognitoId: json2.userSub
         }
         userService.create(body).then(function(result){
+            /// Find promo code
+            if (json2.promoCode){
+                codeService.findByPromoCodeSystem(json2.promoCode).then(function(code){ 
+                    if (code){
+                        var promoBody = {
+                            UserId: result.id,
+                            CodeId: code.id
+                        }
+                        userCodeService.create(body).then(function(userCode){
+                        }).catch(function(err){
+                        });
+                    }
+                }).catch(function(err){
+                });
+            }
         }).catch(function(err){
-            console.log(err);
         });
     },
     sqs: new AWS.SQS()

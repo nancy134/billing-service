@@ -167,3 +167,17 @@ exports.findByPromoCode = function(authParams, code){
     });
 }
 
+exports.findByPromoCodeSystem = function(code){
+    return new Promise(function(resolve, reject){
+        models.Code.findOne({
+            where: {
+                code: code
+            }
+        }).then(function(code){
+            resolve(code);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
