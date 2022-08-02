@@ -781,7 +781,7 @@ app.put('/stripe/invoiceItems/:id', (req, res) => {
 
 app.get('/stripe/payment_methods', (req, res) => {
     var authParams = jwt.getAuthParams(req);
-    stripeService.getPaymentMethods(authParams, req.body).then(function(result){
+    stripeService.getPaymentMethodsMe(authParams, req.body).then(function(result){
         res.send(result);
     }).catch(function(err){
         errorResponse(res, err);

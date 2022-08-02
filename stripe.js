@@ -284,7 +284,7 @@ exports.getPaymentMethodMe = function(authParams){
                 var customerParams = {
                     email: user.email
                 };
-                exports.listCustomers(customerParams).then(function(customers){
+                exports.listCustomers(authParams, customerParams).then(function(customers){
                     var found = false;
                     for (var i=0; i<customers.data.length; i++){
                         if (customers.data[i].metadata.cognitoId === cognitoId){
@@ -293,7 +293,7 @@ exports.getPaymentMethodMe = function(authParams){
                                 customer: customers.data[i].id,
                                 type: 'card'
                             };
-                            exports.getPaymentMethods(payParams).then(function(paymentMethods){
+                            exports.getPaymentMethodsMe(authParams, payParams).then(function(paymentMethods){
                                 resolve(paymentMethods);
                             }).catch(function(err){
                                 reject(err);
@@ -349,7 +349,7 @@ exports.createPaymentSecret = function(authParams){
             var cognitoId = jwtResult['cognito:username']; 
             userService.findByCognitoId(jwtResult['cognito:username']).then(function(user){
                 // 2. find customer via user email 
-                exports.listCustomers({email:user.email}).then(function(customers){
+                exports.listCustomers(authParams, {email:user.email}).then(function(customers){
                     // 3. If customer found, create customer intent
                     if (customers.data.length > 0){
                         var found = false; 
@@ -561,18 +561,15 @@ exports.syncProduct = function(authParams, params){
                             reject(err);
                         });
                     }).catch(function(err){
-                        console.log(err);
                         reject(err);
                     });
                 }).catch(function(err){
-                    console.log(err);
                     reject(err);
                 });
             } else {
                 reject(utilities.notAuthorized());
             }
         }).catch(function(err){
-            console.log(err);
             reject(err);
         });
     });
@@ -762,7 +759,7 @@ exports.updateInvoiceItem = function(authParams, id, body){
 }
 
 
-exports.getPaymentMethods = function(authParams, body){
+exports.getPaymentMethodsMe = function(authParams, body){
     return new Promise(function(resolve, reject){
     jwt.verifyToken(authParams).then(function(jwtResult){
          if (jwt.isAdmin(jwtResult)){
